@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mehroj Quest</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#1e8bf1;--bg2:#0f5fc4;--ink:#1a1033;--card:#fff;--soft:#e3eeff;--c0:#ff5a5f;--c1:#2f9bff;--c2:#ffb627;--c3:#2ecf7a;--pop:#7c4dff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#123a78;--bg2:#0a1f46;--ink:#f2f6ff;--card:#1c3566;--soft:#27457f}}
+:root[data-theme="dark"]{--bg:#123a78;--bg2:#0a1f46;--ink:#f2f6ff;--card:#1c3566;--soft:#27457f}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:linear-gradient(160deg,var(--bg),var(--bg2));background-attachment:fixed;color:#fff;font-family:"Fredoka",system-ui,sans-serif;font-weight:500;display:flex;justify-content:center}
+main{width:100%;max-width:620px;padding:20px 16px 32px}
+[hidden]{display:none!important}
+h1{font-size:clamp(2.4rem,10vw,3.6rem);line-height:1;margin:10px 0 6px;font-weight:700;text-align:center;text-shadow:0 4px 0 rgba(0,0,0,.25)}
+h2{margin:0 0 10px;font-size:1.4rem}
+p{line-height:1.4;margin:0 0 12px}
+.sub{text-align:center;margin-bottom:18px}
+.card{background:var(--card);color:var(--ink);border-radius:20px;padding:18px;box-shadow:0 6px 0 rgba(0,0,0,.22);margin-bottom:14px}
+.btn{font:inherit;font-weight:700;font-size:1.1rem;border:0;border-radius:14px;padding:13px 20px;background:var(--pop);color:#fff;box-shadow:0 5px 0 rgba(0,0,0,.3);cursor:pointer;width:100%;margin-top:8px}
+.btn.alt{background:var(--c3);color:#12301f}.btn.ghost{background:var(--soft);color:var(--ink)}
+.btn:active,.opt:active,.chest:active{transform:translateY(4px);box-shadow:0 1px 0 rgba(0,0,0,.3)}
+.btn:disabled{opacity:.45}
+.btn:focus-visible,.opt:focus-visible,.chest:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px solid #fff;outline-offset:3px}
+input,textarea{font:inherit;width:100%;padding:13px 14px;border-radius:12px;border:3px solid var(--soft);background:var(--card);color:var(--ink);margin-bottom:10px}
+.hud{display:flex;justify-content:space-between;gap:8px;margin-bottom:10px;font-weight:700}
+.pill{background:var(--card);color:var(--ink);border-radius:999px;padding:6px 14px;box-shadow:0 3px 0 rgba(0,0,0,.2)}
+.bar{height:12px;border-radius:8px;background:rgba(0,0,0,.25);overflow:hidden;margin-bottom:14px}
+.bar b{display:block;height:100%;width:100%;transition:width .1s linear}
+.q{font-size:clamp(1.25rem,5vw,1.6rem);font-weight:700;line-height:1.3;margin-bottom:14px;text-align:center}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:460px){.grid{grid-template-columns:1fr}}
+.opt{font:inherit;font-weight:700;font-size:1.05rem;color:#1a1033;border:0;border-radius:14px;padding:16px 12px;min-height:80px;cursor:pointer;box-shadow:0 6px 0 rgba(0,0,0,.3);line-height:1.25}
+.opt:nth-child(1){background:var(--c0)}.opt:nth-child(2){background:var(--c1)}.opt:nth-child(3){background:var(--c2)}.opt:nth-child(4){background:var(--c3)}
+.opt.dim{opacity:.35;pointer-events:none}.opt.pick{outline:5px solid #fff;pointer-events:none}.opt.right{outline:5px solid #fff;opacity:1}.opt.bad{animation:sh .35s}
+@keyframes sh{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+@media(prefers-reduced-motion:reduce){.opt.bad{animation:none}}
+.verdict{font-size:1.7rem;font-weight:700;margin-bottom:6px}
+.chests{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}
+.chest{font:inherit;font-size:2.6rem;border:0;border-radius:16px;background:var(--c2);padding:14px 0;cursor:pointer;box-shadow:0 6px 0 rgba(0,0,0,.3)}
+.res{background:var(--soft);border-radius:12px;padding:12px;margin:10px 0;font-weight:700}
+.lb{list-style:none;padding:0;margin:0 0 10px}
+.lb li{display:flex;justify-content:space-between;padding:9px 13px;border-radius:12px;margin-bottom:6px;background:var(--soft)}
+.lb li.me{background:var(--c2);color:#1a1033;font-weight:700}
+.code{font-size:3.2rem;font-weight:700;text-align:center;letter-spacing:.15em;margin:0}
+.big{font-size:3rem;text-align:center;margin:0}
+.note{font-size:.9rem;opacity:.85;text-align:center}
+</style>
+</head>
+<body>
+<main>
+
+<section id="home">
+  <h1>Mehroj Quest 🗺️</h1>
+  <p class="sub">40 ta savol: geografiya, matematika, fan va hazil. Sandiq och, do'stlaringdan tanga o'g'irla!</p>
+  <div class="card">
+    <input id="nick" maxlength="16" placeholder="Taxallusing" autocomplete="off">
+    <input id="code" maxlength="4" inputmode="numeric" placeholder="O'yin kodi (4 raqam)" autocomplete="off">
+    <button class="btn" id="join">Qo'shilish</button>
+    <button class="btn alt" id="host">O'yin ochish (host)</button>
+    <button class="btn ghost" id="solo">Botlar bilan yakka o'ynash</button>
+    <p class="note" id="rnote" hidden style="margin-top:10px;color:var(--ink)">Onlayn xonaga ulanib bo'lmadi. Yakka o'yin ishlaydi.</p>
+  </div>
+</section>
+
+<section id="lobby" hidden>
+  <div class="card">
+    <p class="note" style="color:var(--ink)">O'yin kodi</p>
+    <p class="code" id="lcode"></p>
+    <h2>O'yinchilar</h2>
+    <ul class="lb" id="plist"></ul>
+    <div id="hostbox">
+      <p style="font-size:.95rem">Savollarga qo'shiladigan do'stlar ismlari (vergul bilan). Qo'shilganlar ismi o'zi qo'shiladi.</p>
+      <textarea id="names" rows="2" placeholder="Ali, Vali, Gulnora, Jasur"></textarea>
+      <button class="btn alt" id="start">Boshlash</button>
+    </div>
+    <p class="note" id="wait" hidden style="color:var(--ink)">Host o'yinni boshlashini kuting...</p>
+  </div>
+</section>
+
+<section id="game" hidden>
+  <div class="hud"><span class="pill" id="prog"></span><span class="pill" id="streak"></span><span class="pill" id="coins"></span></div>
+  <p class="note" id="repbn" hidden>Yangi savollar tugadi, ba'zilari qaytishi mumkin.</p>
+  <div class="bar"><b id="tbar"></b></div>
+  <div class="card"><div class="q" id="qtext"></div><div class="grid" id="opts"></div>
+    <p class="note" id="await" hidden style="margin-top:12px">Javob qabul qilindi. Boshqalarni kuting...</p></div>
+</section>
+
+<section id="fb" hidden>
+  <div class="card">
+    <div class="verdict" id="verdict"></div>
+    <p id="fact"></p>
+    <div id="chestbox" hidden>
+      <p><b>Sandiq tanla!</b></p>
+      <div class="chests" id="chests"></div>
+    </div>
+    <div class="res" id="res" hidden></div>
+    <div class="res" id="cres" hidden></div>
+    <ul class="lb" id="lb1"></ul>
+    <p class="note" id="cd"></p>
+    <button class="btn" id="next" hidden>Keyingi savol</button>
+  </div>
+</section>
+
+<section id="end" hidden>
+  <div class="card">
+    <p class="big" id="emoji"></p>
+    <h2 id="rank" style="text-align:center"></h2>
+    <p id="sum" style="text-align:center"></p>
+    <ul class="lb" id="lb2"></ul>
+    <button class="btn" id="again">Bosh sahifa</button>
+  </div>
+</section>
+
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const rng=s=>()=>{s|=0;s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
+const shuf=(a,r)=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const GQ=[
+["Dunyodagi eng katta okean qaysi?",["Atlantika","Tinch okeani","Hind okeani","Shimoliy Muz"],1,"Tinch okeani Yer yuzasining deyarli uchdan bir qismini egallaydi."],
+["Qaysi mamlakatning poytaxti Kanberra?",["Avstraliya","Kanada","Braziliya","Yangi Zelandiya"],0,"Ko'pchilik Sidney deb adashadi, lekin poytaxt Kanberra."],
+["Qaysi davlat 'ikki karra dengizga chiqishi yo'q' davlatlardan biri?",["Turkiya","O'zbekiston","Ispaniya","Misr"],1,"Dunyoda faqat ikkita shunday davlat bor: O'zbekiston va Lixtenshteyn."],
+["Qaysi qit'ada mamlakatlar eng ko'p?",["Yevropa","Osiyo","Afrika","Amerika"],2,"Afrikada 54 ta mamlakat bor."],
+["Orol dengizi qaysi ikki davlat orasida joylashgan?",["O'zbekiston va Qozog'iston","Eron va Turkmaniston","Tojikiston va Qirg'iziston","Xitoy va Rossiya"],0,"Orol bir paytlar dunyoning eng katta ko'llaridan biri edi."],
+["Qaysi shahar ikki qit'ada joylashgan?",["Parij","Rim","Istanbul","Toshkent"],2,"Istanbulni Bosfor bo'g'ozi Yevropa va Osiyoga ajratadi."],
+["Dunyodagi eng kichik davlat qaysi?",["Monako","Vatikan","Malta","San-Marino"],1,"Vatikan atigi taxminan 0,44 km²."],
+["Everest qaysi tog' tizmasida joylashgan?",["Alp","And","Himolay","Tyan-Shan"],2,"Himolay, Everestning balandligi taxminan 8849 m."],
+["7 × 8 nechaga teng?",["54","56","58","64"],1,"5-6-7-8 deb eslang: 56 = 7×8."],
+["Uchburchak ichki burchaklari yig'indisi necha gradus?",["90°","180°","270°","360°"],1,"Tekislikdagi har qanday uchburchakda 180°."],
+["Pi sonining taxminiy qiymati qaysi?",["2,14","3,14","4,13","3,41"],1,"14-mart butun dunyoda Pi kuni sifatida nishonlanadi."],
+["1 dan 100 gacha butun sonlar yig'indisi nechaga teng?",["5000","5050","5500","4950"],1,"Gauss buni bolaligida 50 juft × 101 deb topgan."],
+["Qaysi son tub son?",["21","27","29","33"],2,"29 faqat 1 ga va o'ziga bo'linadi."],
+["Tomoni 5 bo'lgan kvadratning yuzi nechaga teng?",["10","20","25","15"],2,"5 × 5 = 25."],
+["Yagona juft tub son qaysi?",["1","2","4","0"],1,"2 dan boshqa hamma juft sonlar 2 ga bo'linadi."],
+["0,5 + 0,25 nechaga teng?",["0,55","0,75","0,7","0,3"],1,"Yarim va chorak birga uchdan to'rt bo'ladi."],
+["Quyoshga eng yaqin sayyora qaysi?",["Venera","Merkuriy","Mars","Yer"],1,"Merkuriy, lekin eng issiq sayyora Venera."],
+["Quyosh nuri Yerga taxminan qancha vaqtda yetib keladi?",["8 soniya","8 daqiqa","1 soat","1 kun"],1,"Taxminan 8 daqiqa 20 soniya."],
+["Odam tanasidagi eng katta a'zo qaysi?",["Jigar","Teri","O'pka","Yurak"],1,"Teri butun tanani qoplab turadi."],
+["O'simliklar fotosintez uchun qaysi gazni yutadi?",["Kislorod","Azot","Karbonat angidrid","Geliy"],2,"CO₂ ni olib, kislorod chiqaradi."],
+["Tovush qaysi muhitda eng tez tarqaladi?",["Havo","Suv","Po'lat","Vakuum"],2,"Qattiq jismda tezroq, vakuumda esa umuman tarqalmaydi."],
+["Katta odam skeletida nechta suyak bor?",["106","206","306","406"],1,"206 ta, chaqaloqlarda esa ko'proq."],
+["Qaysi sayyorada bir kun uning bir yilidan uzoqroq?",["Venera","Mars","Yupiter","Yer"],0,"Venera o'z o'qi atrofida juda sekin aylanadi."],
+["Olmos asosan qaysi elementdan iborat?",["Kremniy","Temir","Uglerod","Oltin"],2,"Qalamdagi grafit ham xuddi shu uglerod."],
+["Ahtapotning nechta yuragi bor?",["1 ta","3 ta","5 ta","8 ta"],1,"Uchta! Bizda bittasini ham ehtiyot qilolmaymiz 😅"],
+["Qaysi hayvonning axlati kub shaklida?",["Vombat","Panda","Koala","Ayiq"],0,"Vombat! Tabiatning 3D-printeri."],
+["Koala kuniga taxminan necha soat uxlaydi?",["4 soat","10 soat","20 soat","24 soat"],2,"18–22 soat. Hayotning ma'nosi: dam olish."],
+["Qaysi mevaning urug'lari tashqarisida o'sadi?",["Olma","Qulupnay","Uzum","Anor"],1,"Qulupnay sirtidagi donalar aslida alohida mevachalar."],
+["Banan botanika nuqtai nazaridan nima?",["Sabzavot","Rezavor meva","Yong'oq","Katta o't"],1,"Banan rezavor meva, qulupnay esa emas. Dunyo adolatsiz."],
+["Qaysi qush bir oyoqda turib uxlaydi?",["Kaptar","Tovuq","Flamingo","Bayqush"],2,"Flamingo bir oyog'ini dam oldiradi."],
+["Qaysi mahsulot deyarli hech qachon buzilmaydi?",["Sut","Asal","Non","Onam 'bir chetga olib qo'ygan' ovqat"],1,"Asal! Onamning ovqati 3 kundan keyin sirli bo'lib qoladi."],
+["Qaysi hayvon orqaga yura olmaydi?",["Kenguru","Mushuk","Quyon","Xo'roz"],0,"Kenguru faqat oldinga, xuddi oylik kabi 😄"],
+["Amir Temur qaysi shahar yaqinida tug'ilgan?",["Samarqand","Buxoro","Shahrisabz","Xiva"],2,"Shahrisabz (qadimgi Kesh)."],
+["Mirzo Ulug'bek qaysi fan bilan mashhur?",["Astronomiya","Tibbiyot","Kimyo","Geografiya"],0,"Ulug'bek Samarqandda rasadxona qurdirgan."],
+["Inson birinchi marta Oyga qaysi yili qadam qo'ygan?",["1959","1969","1979","1989"],1,"1969-yil, Nil Armstrong."],
+["Al-Xorazmiy nomidan qaysi so'z kelib chiqqan?",["Algoritm","Internet","Kompyuter","Geometriya"],0,"Al-Xorazmiy → algoritm."],
+["Kompyuterdagi 'bug' so'zi qanday paydo bo'lgan?",["Mashina ichidan haqiqiy kuya chiqqan","Dasturchi ismi","Mushuk tufayli","Xitoycha so'z"],0,"1947-yilda Mark II kompyuteri ichidan haqiqiy kuya topilgan."],
+["Shaxmatda eng kuchli dona qaysi?",["Fil","Ot","Farzin","Rux"],2,"Farzin taxtadagi eng kuchli dona."],
+["Shaxmat taxtasida nechta katak bor?",["36","49","64","81"],2,"8 × 8 = 64."],
+["Qizil va ko'k bo'yoqni aralashtirsak qaysi rang chiqadi?",["Binafsha","Yashil","To'q sariq","Jigarrang"],0,"Qizil + ko'k = binafsha."],
+["Qaysi mamlakat dunyodagi eng katta maydonga ega?",["Xitoy","Rossiya","AQSh","Kanada"],1,"Rossiya 11 ta vaqt mintaqasiga cho'zilgan."],
+["Qaysi mamlakat bayrog'i dunyodagi yagona to'rtburchak bo'lmagan bayroq?",["Nepal","Shveytsariya","Bangladesh","Yaponiya"],0,"Nepal bayrog'i ikkita uchburchakdan iborat."],
+["Qaysi shahar 'Abadiy shahar' deb ataladi?",["Afina","Rim","Qohira","Samarqand"],1,"Rim shunday laqab bilan mashhur."],
+["Dunyodagi eng chuqur ko'l qaysi?",["Baykal","Viktoriya","Issiqko'l","Orol"],0,"Baykalning chuqurligi 1600 metrdan oshadi."],
+["Suvi eng mo'l daryo qaysi qit'ada oqadi?",["Afrika","Janubiy Amerika","Osiyo","Yevropa"],1,"Amazonka suv miqdori bo'yicha dunyoda birinchi."],
+["Toshkent qaysi daryo vodiysida joylashgan?",["Zarafshon","Chirchiq","Amudaryo","Qashqadaryo"],1,"Toshkent Chirchiq daryosi bo'yida."],
+["Registon maydoni qaysi shaharda?",["Buxoro","Xiva","Samarqand","Qarshi"],2,"Registon uchta madrasasi bilan mashhur."],
+["Yaponiya qanday laqab bilan ataladi?",["Chiqayotgan quyosh mamlakati","Bulutlar mamlakati","Muz mamlakati","Oltin vodiy"],0,"Yaponcha 'Nihon' so'zi 'quyosh ildizi' degani."],
+["Hozirda aholisi eng ko'p davlat qaysi?",["Xitoy","Hindiston","AQSh","Indoneziya"],1,"2023-yildan Hindiston Xitoydan o'zib ketgan."],
+["To'rtburchak ichki burchaklari yig'indisi nechaga teng?",["180°","360°","270°","540°"],1,"To'rtburchak ikkita uchburchakka bo'linadi: 2 × 180°."],
+["Fibonachchi qatori: 1, 1, 2, 3, 5, 8, ... keyingi son qaysi?",["11","12","13","15"],2,"Har bir son oldingi ikkitasining yig'indisi: 5 + 8 = 13."],
+["Kvadrati 144 bo'lgan son qaysi?",["10","11","12","14"],2,"12 × 12 = 144."],
+["Aylana uzunligi qaysi formula bilan topiladi?",["πr²","2πr","πd²","4πr"],1,"2πr, doira yuzi esa πr²."],
+["Rim raqami X nechaga teng?",["5","10","50","100"],1,"V = 5, X = 10, L = 50, C = 100."],
+["2 ning 10-darajasi nechaga teng?",["512","1000","1024","2048"],2,"1024, kompyuterlardagi 1 kilobayt shunga yaqin."],
+["Nolga bo'lish mumkinmi?",["Ha, natija 0","Ha, natija 1","Yo'q, aniqlanmagan","Faqat nolni nolga"],2,"Kalkulyator ham bunga xafa bo'ladi 😄"],
+["1000 × 1000 nechaga teng?",["Million","Milliard","Trillion","Yuz ming"],0,"1 000 000, ya'ni bir million."],
+["Inson yuragi kuniga taxminan necha marta uradi?",["10 000","100 000","1 million","10 million"],1,"Taxminan 100 000 marta. Hech dam olmaydi."],
+["Qaysi metall xona haroratida suyuq?",["Simob","Qo'rg'oshin","Alyuminiy","Mis"],0,"Simob xona haroratida suyuq bo'ladigan yagona metall."],
+["Havoning eng ko'p qismini qaysi gaz tashkil qiladi?",["Kislorod","Azot","Karbonat angidrid","Argon"],1,"Havoning taxminan 78 foizi azot."],
+["Nega chaqmoqni momaqaldiroqdan oldin ko'ramiz?",["Yorug'lik tovushdan tez","Tovush yorug'likdan tez","Chaqmoq yaqinroq","Quloq sekin ishlaydi"],0,"Yorug'lik tovushga qaraganda behisob tez."],
+["Qaysi a'zo qonni filtrlab tozalaydi?",["Oshqozon","Buyrak","Taloq","Ichak"],1,"Buyrak kuniga yuzlab litr qonni filtrlaydi."],
+["Eng yengil kimyoviy element qaysi?",["Geliy","Vodorod","Azot","Neon"],1,"Vodorod eng yengil, geliy ikkinchi."],
+["Qaysi vitamin Quyosh nuri ta'sirida terida hosil bo'ladi?",["A","C","D","B12"],2,"D vitamini. Shuning uchun quyoshda yurish foydali."],
+["Eng katta sayyora qaysi?",["Saturn","Yupiter","Neptun","Yer"],1,"Yupiterning ichiga 1300 ga yaqin Yer sig'adi."],
+["Qaysi hayvonning ko'zi miyasidan katta?",["Tuyaqush","Fil","Sher","Burgut"],0,"Tuyaqushning ko'zi miyasidan kattaroq."],
+["Jirafa bo'ynida nechta umurtqa bor?",["7","14","25","40"],0,"Odamda ham 7 ta, jirafada faqat har biri ancha uzun."],
+["Delfinlar qanday uxlaydi?",["Miyasining bir yarmi uxlab","Umuman uxlamaydi","Suv tagida yotib","Chalqancha"],0,"Bir yarmi uxlaydi, ikkinchisi nafas olishni nazorat qiladi."],
+["Qaysi hayvonning qoni ko'k rangda?",["Ahtapot","Sher","Baliq","Ilon"],0,"Ahtapot qonida mis bor, shuning uchun ko'k."],
+["Ari sekundiga taxminan necha marta qanot qoqadi?",["20","200","2000","2"],1,"G'uvillashi shundan."],
+["Qaysi qush pikirlashda eng tez uchadi?",["Peregrin lochini","Burgut","Kaptar","Chittak"],0,"Pikirlashda tezligi 300 km/soatdan oshadi."],
+["Qaysi hayvon sutemizuvchi, lekin tuxum qo'yadi?",["Ornitorink","Kenguru","Koala","Delfin"],0,"Ornitorink tuxum qo'yuvchi sutemizuvchi."],
+["Kosmosga birinchi uchgan inson kim?",["Armstrong","Gagarin","Titov","Glenn"],1,"Yuriy Gagarin 1961-yil 12-aprelda uchgan."],
+["Alisher Navoiy asarlarini asosan qaysi tilda yozgan?",["Eski o'zbek tilida","Arab tilida","Yunon tilida","Rus tilida"],0,"Navoiy o'zbek adabiy tilining asoschisi hisoblanadi."],
+["Ibn Sino Yevropada qanday nom bilan mashhur?",["Avitsenna","Averroes","Algoritm","Aristotel"],0,"Uning 'Tib qonunlari' asrlar davomida o'qitilgan."],
+["O'zbekiston mustaqilligi qaysi yilda e'lon qilingan?",["1989","1991","1993","1995"],1,"1991-yil avgust oxirida."],
+["Marko Polo qayerlik sayyoh?",["Venetsiyalik","Parijlik","Samarqandlik","Madridlik"],0,"U Ipak yo'li bo'ylab Xitoygacha borgan."],
+["Shaxmat qaysi mamlakatda paydo bo'lgan?",["Hindiston","Xitoy","Eron","Misr"],0,"Shaxmatning ilk ko'rinishi qadimgi Hindistonda paydo bo'lgan."],
+["'WWW' qisqartmasi nimani anglatadi?",["World Wide Web","Wide World Web","Web World Wide","World Web Window"],0,"Uni 1989-yilda Tim Berners-Li taklif qilgan."],
+["Python dasturlash tili aslida nimadan nom olgan?",["Monty Python komediya guruhidan","Ilondan","Yunon xudosidan","Muallifning itidan"],0,"Ilondan emas, komediya guruhidan!"],
+["Ekranlardagi RGB ranglari qaysilar?",["Qizil, yashil, ko'k","Qizil, sariq, ko'k","Oq, qora, kulrang","Yashil, sariq, qizil"],0,"Hamma ranglar shu uchtadan hosil bo'ladi."],
+["Klaviaturada Ctrl+Z nima qiladi?",["Oxirgi amalni bekor qiladi","Faylni o'chiradi","Kompyuterni o'chiradi","Rasm oladi"],0,"Hayotda ham shunday tugma bo'lsa edi 😄"],
+["Futbolda maydonda har jamoadan nechta futbolchi o'ynaydi?",["9","10","11","12"],2,"11 ta, darvozabon ham shu jumladan."],
+["Qadimgi Olimpiya o'yinlari qayerda boshlangan?",["Gretsiya","Rim","Misr","Xitoy"],0,"Gretsiyadagi Olimpiya shahrida."],
+["Standart pianinoda nechta tugma bor?",["52","76","88","100"],2,"88 ta: 52 ta oq va 36 ta qora."],
+["Kamalakda eng yuqori rang qaysi?",["Qizil","Ko'k","Yashil","Sariq"],0,"Kamalak yuqorisida qizil, pastida binafsha."],
+["Anxel sharsharasi qaysi mamlakatda joylashgan?",["Braziliya","Venesuela","Kanada","Norvegiya"],1,"Anxel sharsharasi dunyodagi eng baland sharshara, balandligi taxminan 979 m."],
+["Qaysi mamlakat 'fyordlar mamlakati' deb ataladi?",["Norvegiya","Italiya","Misr","Hindiston"],0,"Norvegiya sohillari chuqur fyordlar bilan mashhur."],
+["Bermud uchburchagi qaysi okeanda joylashgan?",["Tinch","Atlantika","Hind","Shimoliy Muz"],1,"Uning sirlari haqidagi gaplarning ko'pi uydirma."],
+["Eng sovuq qit'a qaysi?",["Shimoliy Amerika","Antarktida","Osiyo","Yevropa"],1,"Antarktidada pingvinlar bor, lekin ayiqlar yo'q."],
+["Qozog'iston poytaxti qaysi?",["Olmaota","Astana","Bishkek","Ashxobod"],1,"Poytaxt nomi 2022-yilda yana Astanaga qaytarilgan."],
+["Qaysi daryo Orol dengiziga quyilgan?",["Amudaryo","Volga","Nil","Dunay"],0,"Amudaryo va Sirdaryo Orolni suv bilan to'ldirgan."],
+["Pitsa qaysi mamlakatda paydo bo'lgan?",["Italiya","AQSh","Frantsiya","Turkiya"],0,"Pitsa Italiyaning Neapol shahrida paydo bo'lgan."],
+["Aylana diametri 10 bo'lsa, radiusi nechaga teng?",["5","10","20","π"],0,"Radius diametrning yarmi."],
+["Soat 3:00 da strelkalar necha gradusli burchak hosil qiladi?",["30°","60°","90°","120°"],2,"Soat uchda to'g'ri burchak hosil bo'ladi."],
+["Eng kichik tub son qaysi?",["0","1","2","3"],2,"1 tub son emas, eng kichigi 2."],
+["81 ning kvadrat ildizi nechaga teng?",["7","8","9","10"],2,"9 × 9 = 81."],
+["Bir tuzin nechta?",["10","12","20","24"],1,"Tuzin 12 ta."],
+["50%, 0,5 va 1/2 haqida nima deyish mumkin?",["Hammasi bir xil","Hammasi har xil","Faqat ikkitasi teng","Hech biri teng emas"],0,"Yarim — uchta turli yozuvda."],
+["Qaysi sayyora 'Qizil sayyora' deb ataladi?",["Mars","Venera","Yupiter","Saturn"],0,"Yuzasidagi temir oksidi tufayli qizil."],
+["Tovush balandligi qaysi birlikda o'lchanadi?",["Volt","Desibel","Nyuton","Kelvin"],1,"Desibel."],
+["Elektr toki kuchi qaysi birlikda o'lchanadi?",["Amper","Vatt","Om","Joul"],0,"Amper (A)."],
+["Suv qaysi haroratda eng zich bo'ladi?",["0°C","4°C","10°C","100°C"],1,"4°C da. Shu sababli muz suvda suzadi."],
+["Qon guruhlarining asosiy turi nechta (ABO tizimi)?",["2","4","6","8"],1,"A, B, AB va O."],
+["Qaysi gazni nafas olsa, ovoz kulgili bo'lib qoladi?",["Geliy","Azot","Kislorod","Argon"],0,"Geliy ovoz tembrini o'zgartiradi 😄"],
+["Oyning o'zi yorug'lik chiqaradimi?",["Ha","Yo'q, Quyosh nurini qaytaradi","Faqat to'linoyda","Faqat kechasi"],1,"Oy Quyosh nurini qaytaradi."],
+["Yer yuzasining qancha qismini suv egallagan?",["30%","50%","71%","90%"],2,"Taxminan 71 foizini."],
+["Dunyodagi eng katta hayvon qaysi?",["Fil","Ko'k kit","Akula","Jirafa"],1,"Ko'k kit eng katta jonzot."],
+["Zebralarning yo'llari haqida qaysi gap to'g'ri?",["Har birining yo'llari noyob","Hammasida bir xil","Faqat urg'ochisida bor","Yil davomida o'zgarib turadi"],0,"Zebra yo'llari barmoq izi kabi har xil."],
+["Tuyaning o'rkachida nima bor?",["Suv","Yog'","Havo","Suyak"],1,"Suv emas, yog' zahirasi."],
+["Qaysi qush uchmaydi?",["Pingvin","Chittak","Ko'kqarg'a","Kaptar"],0,"Pingvin uchmaydi, lekin suvda 'uchadi'."],
+["Hasharotlarning nechta oyog'i bor?",["4","6","8","10"],1,"6 ta; o'rgimchakda esa 8 ta."],
+["Xeops piramidasi taxminan qancha yil oldin qurilgan?",["500 yil","1000 yil","4500 yil","20 000 yil"],2,"4500 yildan oshiq."],
+["Mona Liza rasmini kim chizgan?",["Leonardo da Vinchi","Pikasso","Van Gog","Mikelanjelo"],0,"Rasm Luvr muzeyida saqlanadi."],
+["'Sahih al-Buxoriy' asarini kim yozgan?",["Imom Buxoriy","Ibn Sino","Beruniy","Farobiy"],0,"Imom Buxoriy hadislar to'plamini tuzgan."],
+["Abu Rayhon Beruniy qaysi o'lkada tug'ilgan?",["Xorazm","Samarqand","Buxoro","Toshkent"],0,"Beruniy Xorazmda tug'ilgan."],
+["Kim 'Evrika!' deb qichqirgan degan rivoyat bor?",["Arximed","Nyuton","Galiley","Eynshteyn"],0,"Vannadan chiqayotib kashfiyot qilgan degan rivoyat."],
+["Android tizimini qaysi kompaniya ishlab chiqadi?",["Apple","Google","Nokia","Intel"],1,"Android Google'ga tegishli."],
+["Bir baytda nechta bit bor?",["4","8","16","32"],1,"1 bayt = 8 bit."],
+["'Emoji' so'zi qaysi tildan kelgan?",["Yapon","Xitoy","Koreys","Ingliz"],0,"'E' rasm, 'moji' belgi degani."],
+["Marafon masofasi qancha?",["21 km","42 km","50 km","100 km"],1,"42 km 195 metr."],
+["Kamalakda nechta rang bor?",["5","6","7","8"],2,"Qizildan binafshagacha 7 ta."],
+["Rubik kubini qaysi mamlakatlik ixtiro qilgan?",["Vengriya","Yaponiya","AQSh","Rossiya"],0,"Ernő Rubik 1974-yilda ixtiro qilgan."],
+["Futbolda sariq kartochka nimani anglatadi?",["Ogohlantirish","Maydondan chiqarish","Penalti","Almashtirish"],0,"Ikkita sariq kartochka bitta qizilga teng."],
+["Mushuklar asosan kimga miyovlaydi?",["Odamlarga","Bir-biriga","Itlarga","Oyga"],0,"Katta mushuklar bir-biriga kam miyovlaydi, miyov asosan odamlar uchun."]
+].map(([q,a,c,f])=>({q,a,c,f}));
+const NQ=[
+{q:"{a} 'hozir boraman' desa, aslida necha daqiqada yetib keladi?",a:["Hozir","5 daqiqa","1 soat","{a}ning o'zi ham bilmaydi"],c:3,f:"{a} uchun 'hozir' bu vaqt emas, yo'nalish."},
+{q:"{a} guruhda 'kim bor?' deb yozsa, nima bo'ladi?",a:["Hamma darrov javob beradi","Hech kim ko'rmaydi","Ertasiga {b}: 'ha, men'","Guruh yopiladi"],c:2,f:"Hamma ko'radi, hech kim yozmaydi, ertasiga {b} 'ha men' deydi."},
+{q:"{a} va {b} bir xonada qolib ketsa, birinchi nima bo'ladi?",a:["Jimlik","Plov buyurtma qilinadi","Dars qilishadi","Ikkalasi uxlaydi"],c:1,f:"Plov har qanday muammoning birinchi yechimi 🍚"},
+{q:"{a}ning telefonida zaryad 1% qoldi. Nima qiladi?",a:["Zaryadlaydi","Hammaga story qo'yadi","{b}dan zaryadlagich so'raydi","Telefonni suvga tashlaydi"],c:2,f:"{b}da zaryadlagich doim topiladi. Bu qonun."},
+{q:"{b} choyxonada 'bitta choy' desa, stolga nima keladi?",a:["Bitta choy","Choynak va non","Choy, non, somsa va hisob","{a}ning tug'ilgan kuni tortti"],c:2,f:"'Bitta' o'zbekcha 'boshlanishi' degani."},
+{q:"{a} dushanba ertalab uyg'onganda birinchi fikri nima?",a:["Ish haftasi boshlandi","Yana 5 daqiqa","Yakshanba qaytsa edi","{b}ga yozay: 'kela olmayman'"],c:1,f:"Yana 5 daqiqa... olti marta."},
+{q:"{a} 'bir daqiqa' desa, {b} qancha kutadi?",a:["Bir daqiqa","10 daqiqa","Yarim soat","Uzoq, chunki {a} choy ichishga ketdi"],c:3,f:"{a}ning 'bir daqiqasi' kutish emas, sabr mashqi."},
+{q:"{a} yangi telefon olsa, birinchi nima qiladi?",a:["Himoya oynasi yopishtiradi","{b}ga ko'rsatadi","Qutini 3 oy saqlaydi","Darrov tushirib yuboradi"],c:1,f:"{b} 'zo'r ekan' deydi, o'zida esa eskisi."},
+{q:"{b} 'diyetadaman' desa, {a} nima buyurtma qiladi?",a:["Salat","Pitsa 'ikkimizga'","Suv","Hech narsa"],c:1,f:"Diyeta ertaga boshlanadi, odatdagidek."},
+{q:"{a} 'men tayyorman' desa, aslida nima bo'ladi?",a:["Hammasi tayyor","Eng so'nggi daqiqada hammasi tayyorlanadi","Hech narsa yo'q, lekin ishonch zo'r","{b} yordam beradi"],c:1,f:"Shiddat bilan, oxirgi daqiqada. Klassika."},
+{q:"{a} 'bugun erta yotaman' desa, soat nechada uxlaydi?",a:["22:00","23:00","02:00, 'bitta video'dan keyin","Umuman uxlamaydi"],c:2,f:"'Bitta video' = 3 soat."},
+{q:"{b} guruhga rasm tashlasa, {a} birinchi nima deydi?",a:["'Zo'r!'","'Men qani?'","Faqat stiker","Ko'rdi, javob yo'q"],c:1,f:"Har guruhda bir {a} bor: rasmda o'zini qidiradi."},
+{q:"{a} 'hech narsa o'qimadim' desa, aslida nima bo'lgan?",a:["Haqiqatan o'qimagan","A'lo baho olgan","{b}dan past baho","5 soat o'qigan"],c:3,f:"'Hech narsa o'qimadim' = 5 soat o'qigan."},
+{q:"{a} 'pul yo'q' desa, keyingi kuni nima bo'ladi?",a:["Tejaydi","{b}dan qarz so'raydi","Hammaga choy ichiradi","Yangi telefon sotib oladi"],c:3,f:"'Pul yo'q' va 'yangi telefon' bir kunda bo'ladi."},
+{q:"{a} va {b} birga ovqatlansa, hisobni kim to'laydi?",a:["{a}","{b}","Teng bo'lishadi","Hamma telefoniga qaraydi"],c:3,f:"Hisob kelganda hamma telefonga qaraydi."},
+{q:"{b} 'ertaga erta turaman' desa, nechta signal qo'yadi?",a:["1 ta","3 ta","7 ta, oltitasini o'chiradi","Umuman qo'ymaydi"],c:2,f:"Va baribir {a}ning qo'ng'irog'i bilan uyg'onadi."}
+];
+const BOTS=["Plov_Qiroli","Wi-Fi_Sehrgari","Uxlab_Qolgan_Ayiq"];
+const CH=[
+ {t:"🪙 +80 tanga",d:80},{t:"🪙 +120 tanga",d:120},{t:"🍚 Plov tushdi! +150 tanga",d:150},{t:"💎 Jackpot! +300 tanga",d:300},
+ {t:"🐱 Mushuk tangalarni ag'dardi: -10%",d:"lose"},{t:"🦹 O'g'rilik! Boshqasidan 15% ol",d:"steal"},{t:"🦹 O'g'rilik! Boshqasidan 15% ol",d:"steal"}
+];
+const T=20;
+let RM=null,G={},tm=null,poll=null,FB=null;
+const CFG={apiKey:"AIzaSyDkaxq9JVmC3Q2k5HRdae9XufvgkWrrzs8",authDomain:"mehroj-quest.firebaseapp.com",databaseURL:"https://mehroj-quest-default-rtdb.firebaseio.com",projectId:"mehroj-quest",storageBucket:"mehroj-quest.firebasestorage.app",messagingSenderId:"446303756048",appId:"1:446303756048:web:943743a41a8430a4604f95"};
+$("join").disabled=true;$("host").disabled=true;
+(async()=>{try{
+  const V="10.12.2",A=await import("https://www.gstatic.com/firebasejs/"+V+"/firebase-app.js"),D=await import("https://www.gstatic.com/firebasejs/"+V+"/firebase-database.js");
+  FB={D,db:D.getDatabase(A.initializeApp(CFG))};
+  $("join").disabled=false;$("host").disabled=false;
+}catch(e){$("rnote").hidden=false}})();
+const showErr=e=>{$("rnote").textContent=(e&&e.message)||"Ulanib bo'lmadi";$("rnote").hidden=false};
+function joinFB(code,isHost,name){return(async()=>{
+  const {D,db}=FB,r=D.ref(db,"rooms/"+code);
+  const ex=(await D.get(D.child(r,"created"))).exists();
+  if(isHost&&ex)throw new Error("Kod band, qayta bosing");
+  if(!isHost){if(!ex)throw new Error("Bunday kod topilmadi");if((await D.get(D.child(r,"game"))).exists())throw new Error("O'yin allaqachon boshlangan")}
+  if(isHost)await D.set(D.child(r,"created"),Date.now());
+  const pid="p"+Math.random().toString(36).slice(2,10),pr=D.child(r,"players/"+pid);
+  await D.set(pr,{name:name.slice(0,16),coins:0});
+  D.onDisconnect(pr).remove();
+  let off=0,peers=[],started=false;const ph=[],sh=[],hh=[],offs=[];
+  offs.push(D.onValue(D.ref(db,".info/serverTimeOffset"),s=>{off=Number(s.val())||0}));
+  offs.push(D.onValue(D.child(r,"players"),s=>{peers=[];s.forEach(c=>{const v=c.val()||{};peers.push({peer:c.key,isMe:c.key===pid,sameTab:c.key===pid,presence:{name:String(v.name||"").slice(0,16),coins:Number(v.coins)||0,seen:v.seen||null}})});ph.forEach(f=>f())}));
+  offs.push(D.onValue(D.child(r,"game"),s=>{const v=s.val();if(v&&!started){started=true;sh.forEach(f=>f({data:v}))}}));
+  offs.push(D.onChildAdded(D.ref(db,"rooms/"+code+"/hits/"+pid),s=>{const v=s.val()||{};D.remove(s.ref);hh.forEach(f=>f({data:{to:pid,amt:Math.min(5000,Math.max(0,Math.round(+v.amt||0)))}}))}));
+  return{now:()=>Date.now()+off,peers:()=>peers,onPeers:f=>ph.push(f),on:(t,f)=>(t==="start"?sh:hh).push(f),presence:p=>D.update(pr,p),
+    emit:(t,d)=>t==="start"?D.set(D.child(r,"game"),{seed:d.seed,names:d.names.slice(0,30).map(n=>String(n).slice(0,16)),g:d.g,n:d.n,rep:!!d.rep,startAt:+d.startAt||0}):D.push(D.ref(db,"rooms/"+code+"/hits/"+d.to),{amt:d.amt}),
+    leave:()=>{offs.forEach(o=>o());D.remove(pr)}};
+})()}
+function show(id){["home","lobby","game","fb","end"].forEach(x=>$(x).hidden=x!==id);window.scrollTo(0,0)}
+const nick=()=>$("nick").value.trim()||"Mehmon";
+function setCoins(v){G.coins=Math.max(0,v);if(RM)RM.presence({coins:G.coins})}
+function rows(){
+  if(RM){const seen=new Set();return RM.peers().filter(p=>p.presence&&p.presence.name).map(p=>({n:p.presence.name,c:p.presence.coins||0,me:p.isMe&&p.sameTab,peer:p.peer}))}
+  return [{n:G.name,c:G.coins,me:true}].concat(G.bots.map(b=>({n:b.n,c:b.c})));
+}
+function board(ul){
+  ul.innerHTML="";
+  rows().sort((a,b)=>b.c-a.c).forEach((p,k)=>{const li=document.createElement("li");if(p.me)li.className="me";
+    const a=document.createElement("span");a.textContent=(k+1)+". "+p.n;const b=document.createElement("span");b.textContent="🪙 "+p.c;li.append(a,b);ul.appendChild(li)});
+}
+async function enter(code,isHost){
+  G={name:nick(),host:isHost,code,coins:0};
+  RM=await joinFB(code,isHost,G.name);
+  RM.presence({name:G.name,coins:0,seen:seenGet()});
+  RM.on("start",m=>begin(m.data));
+  RM.on("hit",m=>{const me=RM.peers().find(p=>p.isMe&&p.sameTab);if(m.data&&me&&m.data.to===me.peer&&G.qs)setCoins(G.coins-Math.round(+m.data.amt||0))});
+  RM.onPeers(()=>{if(!$("lobby").hidden)board($("plist"));});
+  $("lcode").textContent=code;$("hostbox").hidden=!isHost;$("wait").hidden=isHost;
+  show("lobby");board($("plist"));
+  clearInterval(poll);poll=setInterval(()=>{if(!$("lobby").hidden)board($("plist"));if(!$("end").hidden)board($("lb2"))},1000);
+}
+$("host").onclick=()=>enter(String(1000+Math.floor(Math.random()*9000)),true).catch(showErr);
+$("join").onclick=()=>{const c=$("code").value.trim();if(c.length===4)enter(c,false).catch(showErr);else $("code").focus()};
+$("start").onclick=()=>{
+  const set=new Set($("names").value.split(/[,\n]/).map(s=>s.trim()).filter(Boolean));
+  rows().forEach(r=>set.add(r.n));
+  const d=mkGame({names:[...set],startAt:RM.now()+6000});
+  RM.emit("start",d);
+};
+$("solo").onclick=()=>{
+  RM=null;G={name:nick(),solo:true,coins:0,bots:BOTS.map(n=>({n,c:0}))};
+  begin(mkGame({names:[G.name,"Ali","Vali","Gulnora"]}));
+};
+const ids=(l,P,n,r)=>Array.isArray(l)&&l.length===n&&l.every(i=>P[i])?l.map(i=>P[i]):shuf(P,r).slice(0,n);
+function seenGet(){let h;try{h=JSON.parse(localStorage.getItem("mq")||"{}")}catch(e){h={}}return{g:h.g||[],n:h.n||[]}}
+function seenAdd(d){const h=seenGet();h.g=[...new Set(h.g.concat(d.g||[]))];h.n=[...new Set(h.n.concat(d.n||[]))];try{localStorage.setItem("mq",JSON.stringify(h))}catch(e){}}
+function pick(len,n,used){
+  const all=[...Array(len).keys()],free=shuf(all.filter(i=>!used.includes(i)),Math.random);
+  let ids=free.slice(0,n),rep=false;
+  if(ids.length<n){rep=true;ids=ids.concat(shuf(all.filter(i=>!ids.includes(i)),Math.random).slice(0,n-ids.length))}
+  return{ids,rep};
+}
+function picks(k,len,n){
+  const s=new Set(seenGet()[k]);
+  if(RM)RM.peers().forEach(p=>{const v=p.presence&&p.presence.seen&&p.presence.seen[k];if(v)Object.values(v).forEach(i=>s.add(+i))});
+  return pick(len,n,[...s]);
+}
+function mkGame(extra){const g=picks("g",GQ.length,36),n=picks("n",NQ.length,4);return Object.assign({seed:Date.now()%1e9,g:g.ids,n:n.ids,rep:g.rep||n.rep},extra)}
+function begin(d){
+  seenAdd(d);G.rep=!!d.rep;$("repbn").hidden=!G.rep;
+  const r=rng(d.seed);
+  let ns=shuf(d.names.length?d.names:["Ali","Vali"],r);
+  while(ns.length<2)ns.push("Do'stim");
+  let k=0;
+  const nq=ids(d.n,NQ,4,r).map(q=>{const a=ns[k%ns.length],b=ns[(k+1)%ns.length];k++;
+    const f=s=>s.replace(/\{a\}/g,a).replace(/\{b\}/g,b);
+    return{q:f(q.q),a:q.a.map(f),c:q.c,f:f(q.f)}});
+  const gq=ids(d.g,GQ,36,r);let all=[];
+  for(let b=0;b<4;b++)all=all.concat(shuf(gq.slice(b*9,b*9+9).concat(nq[b]),r));
+  G.qs=all.map(q=>{const o=shuf(q.a.map((t,i)=>({t,ok:i===q.c})),r);return{q:q.q,o,f:q.f}});
+  G.i=0;G.streak=0;G.ok=0;setCoins(0);
+  G.startAt=d.startAt||(Date.now()+3000);startLoop();
+}
+const F=10,P=T+F,nowT=()=>RM&&RM.now?RM.now():Date.now();
+function hud(){$("prog").textContent=(G.i+1)+" / "+G.qs.length;$("streak").textContent="🔥 "+G.streak;$("coins").textContent="🪙 "+G.coins}
+function tick(){const p=Math.max(0,G.left/T*100),b=$("tbar");b.style.width=p+"%";b.style.background=p>50?"var(--c3)":p>25?"var(--c2)":"var(--c0)"}
+function startLoop(){clearInterval(tm);G.sh=-1;G.fh=-1;tm=setInterval(loop,100);loop()}
+function loop(){
+  const t=(nowT()-G.startAt)/1000;
+  if(t<0){
+    if(G.sh!==-2){G.sh=-2;$("opts").innerHTML="";$("await").hidden=true;show("game")}
+    $("qtext").textContent="O'yin boshlanishiga "+Math.ceil(-t)+" soniya...";G.left=T;tick();return;
+  }
+  const idx=Math.floor(t/P),r=t-idx*P;
+  if(idx>=G.qs.length){clearInterval(tm);return finish()}
+  G.i=idx;
+  if(r<T){
+    if(G.sh!==idx)qStart(idx);
+    G.left=T-r;tick();
+  }else{
+    if(G.fh!==idx)reveal(idx);
+    $("cd").textContent=RM?"Keyingi savolgacha "+Math.ceil(P-r)+" soniya":"";
+    const sec=Math.floor(r);if(G.lbs!==sec){G.lbs=sec;board($("lb1"))}
+  }
+}
+function qStart(i){
+  G.sh=i;G.ans=-1;G.ansLeft=0;
+  const q=G.qs[i];hud();
+  $("qtext").textContent=q.q;$("await").hidden=true;
+  const box=$("opts");box.innerHTML="";
+  q.o.forEach((o,k)=>{const b=document.createElement("button");b.className="opt";b.textContent=o.t;b.onclick=()=>answer(k);box.appendChild(b)});
+  show("game");
+}
+function answer(k){
+  if(G.ans>=0||G.sh!==G.i||$("game").hidden)return;
+  G.ans=k;G.ansLeft=G.left;
+  [...$("opts").children].forEach((b,j)=>b.classList.add(j===k?"pick":"dim"));
+  $("await").hidden=false;
+  if(!RM)G.startAt-=G.left*1000;
+}
+function reveal(i){
+  G.fh=i;G.lbs=-1;
+  const q=G.qs[i],a=G.sh===i?G.ans:-1,good=a>=0&&q.o[a].ok;
+  let gain=0;
+  if(good){gain=100+Math.min(G.streak,5)*25+Math.round(G.ansLeft*3);G.streak++;G.ok++;setCoins(G.coins+gain)}else G.streak=0;
+  if(G.bots)G.bots.forEach(b=>b.c+=Math.random()<.6?100+Math.round(Math.random()*120):Math.round(Math.random()*30));
+  $("verdict").textContent=good?"To'g'ri! 🎉":(a<0?"Vaqt tugadi ⏰":"Xato! 😅");
+  $("fact").textContent=q.f;
+  const rs=$("res");rs.hidden=!good;rs.textContent="+"+gain+" tanga";
+  $("cres").hidden=true;
+  $("chestbox").hidden=!good;
+  $("next").hidden=!(!RM&&!good);
+  $("next").textContent=i+1>=G.qs.length?"Natijani ko'rish":"Keyingi savol";
+  if(good){const c=$("chests");c.innerHTML="";
+    for(let k=0;k<3;k++){const b=document.createElement("button");b.className="chest";b.textContent="📦";b.setAttribute("aria-label","Sandiq "+(k+1));b.onclick=()=>openChest(b);c.appendChild(b)}}
+  hud();board($("lb1"));show("fb");
+}
+function openChest(btn){
+  [...$("chests").children].forEach(b=>b.disabled=true);
+  const ch=CH[Math.floor(Math.random()*CH.length)];let txt=ch.t;
+  if(ch.d==="lose"){const l=Math.round(G.coins*.1);setCoins(G.coins-l)}
+  else if(ch.d==="steal"){
+    const others=rows().filter(p=>!p.me&&p.c>0);
+    if(others.length){const v=others[Math.floor(Math.random()*others.length)],amt=Math.round(v.c*.15);
+      setCoins(G.coins+amt);txt="🦹 "+v.n+"dan "+amt+" tanga o'g'irlading!";
+      if(RM&&v.peer)RM.emit("hit",{to:v.peer,amt});
+      else if(G.bots){const b=G.bots.find(x=>x.n===v.n);if(b)b.c-=amt}
+    }else txt="🦹 O'g'irlash uchun hech kimda tanga yo'q";
+  }else setCoins(G.coins+ch.d);
+  btn.textContent="🎁";$("cres").textContent=txt;$("cres").hidden=false;
+  hud();board($("lb1"));
+  if(!RM){$("next").hidden=false;$("next").focus()}
+}
+$("next").onclick=()=>{if(RM)return;const r=(nowT()-G.startAt)/1000-G.i*P;G.startAt-=(P-r)*1000+50};
+function finish(){
+  const n=G.ok,p=n/G.qs.length,R=p>=.9?["🦄","Mehroj Quest ustasi"]:p>=.7?["😎","Aqlli Mushuk"]:p>=.5?["🐻","Uyqusirab qolgan Ayiq"]:p>=.3?["🐔","Xursand Xo'roz"]:["🥔","Kartoshka, lekin yoqimli"];
+  $("emoji").textContent=R[0];$("rank").textContent=R[1];
+  $("sum").textContent=G.qs.length+" tadan "+n+" ta to'g'ri, "+G.coins+" tanga.";
+  board($("lb2"));show("end");
+}
+$("again").onclick=()=>{if(RM){RM.leave();RM=null}clearInterval(poll);clearInterval(tm);show("home")};
+</script>
+</body>
+</html>
